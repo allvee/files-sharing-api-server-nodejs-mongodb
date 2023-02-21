@@ -6,7 +6,6 @@ import '../../../config/env.config.js';
 import {getPageDetails, updateDownloadCount} from "../../../utils/helper.js";
 import File from "../../models/file.model.js";
 import DownloadHistory from "../../models/download.history.model.js";
-import {getClientIp} from "request-ip";
 
 export const uploadFiles = async (req, res) => {
     let response = {}
