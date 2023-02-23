@@ -81,7 +81,6 @@ export const handleFileUpload = fileUpload.any();
 export const uploadToGoogleCloudStorage = async (bucketName, fileName, fileBuffer, mimeType) => {
     return new Promise(async (resolve, reject) => {
         try {
-
             const {keyFilename, bucketName} = file_upload_configurations.CONFIG.google;
             const credentials = JSON.parse(await fs.readFileSync(keyFilename));
 
@@ -162,8 +161,6 @@ export async function canUpload(req, res, next) {
         maxUploadsPerIp = config.maxUploadsPerIp;
     }
 
-    console.log('startOfToday:', startOfToday);
-    console.log('endOfToday:', endOfToday);
     console.log('maxUploadsPerIp:', maxUploadsPerIp);
     console.log('clientIpAddress:', clientIpAddress);
     let uploadHistory;
@@ -188,11 +185,12 @@ export async function canUpload(req, res, next) {
 
     } catch (e) {
         console.log('err', e)
+        return res.status(500).send({successStatus: false, errorMessage: 'Internal Server Error'});
     }
 
     if (uploadCount < maxUploadsPerIp) {
         return next();
     } else {
-        return res.status(401).send({successStatus: false, errorMessage: 'Upload limit excited'});
+        return res.status(401).send({successStatus: false, errorMessage: 'Daily Upload Limit Exceeded'});
     }
 }

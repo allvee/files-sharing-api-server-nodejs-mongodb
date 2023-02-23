@@ -3,14 +3,6 @@ import moment from "moment";
 import {DownloadHistory} from "../api/models/download.history.model.js";
 import File from "../api/models/file.model.js";
 
-export const allowedFileTypes = [
-    '.doc', '.docx', '.html', '.txt', '.rtf', '.xls', '.xlsx', '.csv', '.tsv', '.ods', '.ppt', '.pptx', '.pdf', '.jpg', '.jpeg', '.gif', '.bmp', '.svg', '.mp4', '.mov', '.avi', '.wmv', '.flv', '.mp3', '.m4a', '.wav', '.aac', '.aiff', '.mka', '.mkv', '.mpg', '.mpeg', '.webm', '.wma', '.ico', '.tif', '.tiff', '.eps', '.pptm', '.potm', '.ppsm', '.xlsxm', '.xlsm', '.xlsb', '.docm', '.dotm', '.odt', '.ott', '.uot', '.txt', '.csv', '.rtf', '.pdf', '.png', '.bmp', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.pptm', '.potm', '.ppsm', '.mp4a', '.weba'
-];
-
-export const generateRandomFilename = (img_prefix = '') => {
-    return `${img_prefix}-${uuidv4()}`;
-}
-
 export const getPageDetails = (limit, page, count) => {
     const total_pages = Math.ceil(count / limit);
     const has_previous = page > 1;
@@ -28,6 +20,14 @@ export const getPageDetails = (limit, page, count) => {
         total_items: count
     };
 };
+
+export const allowedFileTypes = [
+    '.doc', '.docx', '.html', '.txt', '.rtf', '.xls', '.xlsx', '.csv', '.tsv', '.ods', '.ppt', '.pptx', '.pdf', '.jpg', '.jpeg', '.gif', '.bmp', '.svg', '.mp4', '.mov', '.avi', '.wmv', '.flv', '.mp3', '.m4a', '.wav', '.aac', '.aiff', '.mka', '.mkv', '.mpg', '.mpeg', '.webm', '.wma', '.ico', '.tif', '.tiff', '.eps', '.pptm', '.potm', '.ppsm', '.xlsxm', '.xlsm', '.xlsb', '.docm', '.dotm', '.odt', '.ott', '.uot', '.txt', '.csv', '.rtf', '.pdf', '.png', '.bmp', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.pptm', '.potm', '.ppsm', '.mp4a', '.weba'
+];
+
+export const generateRandomFilename = (img_prefix = '') => {
+    return `${img_prefix}-${uuidv4()}`;
+}
 
 export const updateDownloadCount = async (ipAddress, publicKey) => {
     try {

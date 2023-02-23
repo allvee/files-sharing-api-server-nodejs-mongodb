@@ -41,14 +41,17 @@ import routes from './api/routes/index.js';
 
 app.use('/', routes);
 
-app.use(function (err, req, res) {
-    console.error('err', err);
-    console.error('err.stack', err.stack);
-    console.error('err name', err.name);
-    console.error('err message', err.message);
+app.use((err, req, res) => {
+
     let error_response = {};
     error_response.seccessStatus = false;
-    if (req.accepts('json')) {
+    if (err.method === 'GET' && !err.query.publicKey) {
+        error_response.errorMessage = 'publicKey key is required for download';
+        return req.status(500).json(error_response);
+    } else if (err.method === 'DELETE' && !err.query.privateKey) {
+        error_response.errorMessage = 'Private key is required for deletion';
+        return req.status(500).json(error_response);
+    } else if (req.accepts('json')) {
         if (err.stack === 'ExtensionError' || err.stack === 'FieldNameMissing') {
             error_response.errorMessage = err.message;
         } else {
@@ -57,14 +60,6 @@ app.use(function (err, req, res) {
         res.status(500).json(error_response);
     } else {
         res.status(500).send('Something broke! Please take care of this error');
-    }
-});
-
-app.use((err, req, res, next) => {
-    if (err instanceof multer.MulterError) {
-        res.status(400).json({successStatus: false, errorMessage: 'File upload error: ' + err.message});
-    } else {
-        next(err);
     }
 });
 
