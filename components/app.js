@@ -15,21 +15,14 @@ import requestIp from 'request-ip';
 
 app.use(requestIp.mw());
 import './config/connection.js'
+import {general_configurations} from './config/index.js'
 
-const env = process.env;
-
-global.onStartingResetAllDataFromDB = (env.ON_STARTING_RESET_ALLDATA_FROM_DB === 'true');
-global.cleanupSchedule = env.STORAGE_CLEANUP_SCHEDULE;
-
-global.port = env.PORT;
-global.application_base_url = env.APPLICATION_BASE_URL;
-app.set("views", `${env.VIEW_DIRECTORY}`);
-app.set("view engine", "ejs");
+global.port = general_configurations.PORT;
+global.application_base_url = general_configurations.APPLICATION_BASE_URL;
 
 app.use(express.json({limit: '50mb'}));
 app.use(express.urlencoded({limit: '50mb', extended: true}));
 
-app.use(express.static(`${env.FTP_DIRECTORY}`));
 app.use(favicon(path.join(process.cwd(), "favicon.svg")));
 
 app.all('/', (req, res) => {
@@ -48,7 +41,7 @@ import routes from './api/routes/index.js';
 
 app.use('/', routes);
 
-app.use(function (err, req, res, next) {
+app.use(function (err, req, res) {
     console.error('err', err);
     console.error('err.stack', err.stack);
     console.error('err name', err.name);

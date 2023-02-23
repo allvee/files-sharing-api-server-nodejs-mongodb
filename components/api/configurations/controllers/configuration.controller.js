@@ -1,7 +1,5 @@
-import '../../../config/env.config.js';
-
-const env = process.env;
 import {Configuration} from "../../models/configuration.model.js";
+import {file_upload_configurations} from "../../../config/index.js";
 
 
 export const addConfigurationData = async (req, res) => {
@@ -31,10 +29,10 @@ export const addConfigurationData = async (req, res) => {
             return res.status(500).json(response);
         }
         if (!maxDownloadsPerIp) {
-            maxDownloadsPerIp = (env.MAX_DOWNLOAD_LIMIT_PER_IP_PER_DAY || 5)
+            maxDownloadsPerIp = (file_upload_configurations.MAX_UPLOADS_PER_IP || 5)
         }
         if (!inactivityLimit) {
-            inactivityLimit = (env.INACTIVITY_LIMIT_ID_DAYS || 7)
+            inactivityLimit = (file_upload_configurations.INACTIVITY_LIMIT_ID_DAYS || 7)
         }
         const configurationData = {
             maxDownloadsPerIp: maxDownloadsPerIp,

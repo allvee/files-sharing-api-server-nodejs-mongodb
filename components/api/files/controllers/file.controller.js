@@ -1,19 +1,28 @@
 import {v4 as uuidv4} from 'uuid';
 import fs from 'fs';
 import archiver from 'archiver';
-import '../../../config/env.config.js';
 
-import {getPageDetails, updateDownloadCount} from "../../../utils/helper.js";
+import {
+    generateRandomFilename,
+    getPageDetails,
+    updateDownloadCount,
+} from "../../../utils/helper.js";
 import File from "../../models/file.model.js";
 import DownloadHistory from "../../models/download.history.model.js";
+import {file_upload_configurations} from "../../../config/index.js";
+import middleware from "../middlewares/index.js";
+import path from "path";
+
+const {uploadToGoogleCloudStorage} = middleware;
 
 export const uploadFiles = async (req, res) => {
     let response = {}
     response.successStatus = false;
     const clientIpAddress = req.clientIp;
     try {
+
         if (!req.files || req.files.length === 0) {
-            return res.status(400).json({error: 'No files uploaded'});
+            return res.status(400).json({successStatus: false, errorMessage: 'No files uploaded'});
         }
         const files = req.files.filter((file) => file.fieldname);
         if (files.length === 0) {
@@ -21,33 +30,64 @@ export const uploadFiles = async (req, res) => {
             return res.status(400).send(response);
         }
 
+        if (!req.files || Object.keys(req.files).length === 0) {
+            return res.status(400).send('No files were uploaded.');
+        }
+
         const publicKey = uuidv4();
         const privateKey = uuidv4();
 
-        const uploadedFiles = req.files.map(file => ({
-            ipAddress: clientIpAddress,
-            originalName: file.originalname,
-            publicKey,
-            privateKey,
-            size: parseInt(file.size / 1024),
-            mimetype: file.mimetype,
-            filepath: file.path
-        }));
+        let uploadedFiles;
+        if (file_upload_configurations.PROVIDER === 'google') {
+            // Upload files to Google Cloud Storage
+            const bucketName = file_upload_configurations.CONFIG.google;
+            uploadedFiles = await Promise.all(req.files.map(async (file) => {
 
+                const originalName = file.originalname;
+                const {name: originalNameWithoutExt, ext: originalNameExt} = path.parse(originalName);
+                const firstWord = originalNameWithoutExt.split(' ')[0];
+                const randomName = generateRandomFilename(firstWord);
+                const fileName = `${randomName}${originalNameExt}`;
+
+                const mimeType = file.mimetype;
+                const gcFile = await uploadToGoogleCloudStorage(bucketName, fileName, file.buffer, mimeType);
+                console.log('gcFile:', gcFile);
+
+                return {
+                    ipAddress: clientIpAddress,
+                    originalName: file.originalname,
+                    publicKey,
+                    privateKey,
+                    size: parseInt(file.size / 1024),
+                    mimetype: file.mimetype,
+                    filepath: gcFile.metadata.mediaLink,
+                    provider: 'google'
+                };
+            }));
+        } else {
+            uploadedFiles = req.files.map(file => ({
+                ipAddress: clientIpAddress,
+                originalName: file.originalname,
+                publicKey,
+                privateKey,
+                size: parseInt(file.size / 1024),
+                mimetype: file.mimetype,
+                filepath: file.path,
+                provider: 'local'
+            }));
+        }
         let result = await File.create(uploadedFiles);
         response.successStatus = true
         response.publicKey = publicKey
         response.privateKey = privateKey
         console.log('resp:', result)
 
-        res.json(response);
+        return res.json(response);
 
     } catch (err) {
         console.error(err);
         response.errorMessage = err.message
-        res.status(500).send(response);
-    } finally {
-
+        return res.status(500).json(response);
     }
 };
 
@@ -59,7 +99,6 @@ export const downloadFiles = async (req, res) => {
     const {publicKey} = req.params;
 
     try {
-
         if (!publicKey) {
             response.errorMessage = `Please provide a valid key to download`;
             res.status(500).json(response);

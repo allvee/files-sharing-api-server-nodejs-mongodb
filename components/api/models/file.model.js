@@ -11,6 +11,7 @@ const fileSchema = new Schema({
         size: {type: String},
         mimetype: {type: String, required: true},
         filepath: {type: String, required: true},
+        provider: {type: String, default: 'local'},
         lastDownloadDate: {type: Date, default: null},
     },
     {

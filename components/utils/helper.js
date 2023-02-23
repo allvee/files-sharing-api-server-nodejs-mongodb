@@ -1,12 +1,11 @@
-import requestIp from "request-ip";
-
 import {v4 as uuidv4} from 'uuid';
 import moment from "moment";
 import {DownloadHistory} from "../api/models/download.history.model.js";
 import File from "../api/models/file.model.js";
-import Configuration from "../api/models/configuration.model.js";
 
-export const allowedFileTypes = ['.pdf', '.doc', '.docx', '.ppt', '.pptx', '.xls', '.xlsx', '.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg'];
+export const allowedFileTypes = [
+    '.doc', '.docx', '.html', '.txt', '.rtf', '.xls', '.xlsx', '.csv', '.tsv', '.ods', '.ppt', '.pptx', '.pdf', '.jpg', '.jpeg', '.gif', '.bmp', '.svg', '.mp4', '.mov', '.avi', '.wmv', '.flv', '.mp3', '.m4a', '.wav', '.aac', '.aiff', '.mka', '.mkv', '.mpg', '.mpeg', '.webm', '.wma', '.ico', '.tif', '.tiff', '.eps', '.pptm', '.potm', '.ppsm', '.xlsxm', '.xlsm', '.xlsb', '.docm', '.dotm', '.odt', '.ott', '.uot', '.txt', '.csv', '.rtf', '.pdf', '.png', '.bmp', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.pptm', '.potm', '.ppsm', '.mp4a', '.weba'
+];
 
 export const generateRandomFilename = (img_prefix = '') => {
     return `${img_prefix}-${uuidv4()}`;
@@ -49,7 +48,7 @@ export const updateDownloadCount = async (ipAddress, publicKey) => {
 };
 
 
-if (global.onStartingResetAllDataFromDB) {
+/*if (1) {
 
     DownloadHistory.deleteMany({}, (err, result) => {
         if (err) {
@@ -73,4 +72,4 @@ if (global.onStartingResetAllDataFromDB) {
             console.log(`Deleted ${result.deletedCount} documents from File`);
         }
     })
-}
+}*/

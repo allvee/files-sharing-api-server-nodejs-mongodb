@@ -3,7 +3,7 @@ import express from 'express';
 const file_router = express.Router();
 import validator from '../files/middlewares/index.js';
 
-let {canUpload, canDownload, uploadFilesMiddleware} = validator;
+let {canUpload, canDownload, handleFileUpload} = validator;
 
 import {
     uploadFiles,
@@ -13,7 +13,7 @@ import {
     getDownloads
 } from '../files/controllers/file.controller.js';
 
-file_router.post("/files", [canUpload, uploadFilesMiddleware, uploadFiles]);
+file_router.post("/files", [canUpload, handleFileUpload, uploadFiles]);
 
 file_router.get("/files/:publicKey", [canDownload, downloadFiles]);
 

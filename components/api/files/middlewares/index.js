@@ -1,9 +1,9 @@
-import {formDataParser, uploadFilesMiddleware} from './upload.middleware.js';
-import {canUpload, canDownload} from './download.middleware.js';
+import {canUpload, handleFileUpload, uploadToGoogleCloudStorage} from './upload.middleware.js';
+import {canDownload} from './download.middleware.js';
 
 export default {
-    uploadFilesMiddleware,
+    handleFileUpload,
+    uploadToGoogleCloudStorage,
     canDownload,
     canUpload,
-    formDataParser
 }

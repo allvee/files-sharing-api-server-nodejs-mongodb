@@ -1,10 +1,7 @@
 import fs from 'fs';
-import '../config/env.config.js';
-
-const env = process.env;
-
 import File from "../api/models/file.model.js";
 import Configuration from "../api/models/configuration.model.js";
+import {file_upload_configurations} from "../config/index.js";
 
 
 const deleteInactiveFiles = async () => {
@@ -17,12 +14,19 @@ const deleteInactiveFiles = async () => {
             startDate: {$lte: now},
             endDate: {$gte: now},
         });
+        let inactivityLimit;
 
-        const inactivityLimit = (configurationData.inactivityLimit || env.INACTIVITY_LIMIT_ID_DAYS);
+        if (!configurationData) {
+            inactivityLimit = file_upload_configurations.INACTIVITY_LIMIT_ID_DAYS
+        } else {
+            inactivityLimit = configurationData.inactivityLimit;
+        }
+
         const cutoffDate = new Date(Date.now() - inactivityLimit * 24 * 60 * 60 * 1000); // calculate the cutoff date
 
         const inactiveFiles = await File.find({lastDownloadDate: {$lt: cutoffDate}});
 
+        console.log('Time Now:', now);
         console.log('inactivityLimit in Days:', inactivityLimit);
         console.log('No of inactiveFiles:', inactiveFiles.length);
 

@@ -1,9 +1,7 @@
 import Agenda from 'agenda';
-import '../config/env.config.js';
+import {db_configurations} from "../config/index.js";
 
-const env = process.env;
-
-const mongoConnectionString = env.MONGO_CONNECTION_STRING
-export const agenda = new Agenda({db: {address: mongoConnectionString}}); //, collection: 'jobCollectionName'
+const mongoConnectionString = db_configurations.MONGO_CONNECTION_STRING
+export const agenda = new Agenda({db: {address: mongoConnectionString}});
 
 export default agenda
