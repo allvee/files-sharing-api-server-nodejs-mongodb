@@ -46,30 +46,3 @@ export const updateDownloadCount = async (ipAddress, publicKey) => {
         console.log('errorMessage:', errorMessage)
     }
 };
-
-
-/*if (1) {
-
-    DownloadHistory.deleteMany({}, (err, result) => {
-        if (err) {
-            console.error(err);
-        } else {
-            console.log(`Deleted ${result.deletedCount} documents from DownloadHistory`);
-        }
-    });
-    Configuration.deleteMany({}, (err, result) => {
-        if (err) {
-            console.error(err);
-        } else {
-            console.log(`Deleted ${result.deletedCount} documents from Configuration`);
-        }
-    });
-
-    File.deleteMany({}, (err, result) => {
-        if (err) {
-            console.error(err);
-        } else {
-            console.log(`Deleted ${result.deletedCount} documents from File`);
-        }
-    })
-}*/
